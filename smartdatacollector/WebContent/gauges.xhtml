@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+	<ui:composition>
+
+		<p:dialog widgetVar="meter" width="1120" height="350"
+			header="Hystorical trend view" resizable="true" showEffect="fade"
+			hideEffect="fade" styleClass="terminalDialog">
+
+			<h:form id="metergauge_form">
+
+				<p:tabView orientation="left">
+					<p:tab title="Weekly alarm trend">
+						<h:panelGrid columns="1" cellpadding="0">
+							<p:chart type="bar" model="#{chartView.barModel}"
+								style="width:800px;height:300px" />
+						</h:panelGrid>
+					</p:tab>
+				<p:tab title="Traffic trend per week/hour">
+						<h:panelGrid columns="1" cellpadding="0">
+							<p:chart type="bar" model="#{chartView.barModel2}"
+								style="width:800px;height:300px" />
+						</h:panelGrid>
+					</p:tab>
+				</p:tabView>
+
+
+
+				<!--  -->
+
+
+			</h:form>
+
+		</p:dialog>
+
+
+
+
+
+
+	</ui:composition>
+</body>
+</html>

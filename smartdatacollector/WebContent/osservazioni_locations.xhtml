@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+	<ui:composition>
+
+		<p:dialog widgetVar="osservazioni_per_location" width="800"
+			height="600" header="Last observations:" resizable="true"
+			showEffect="fade" hideEffect="fade" styleClass="terminalDialog">
+
+
+
+			<h:form id="form_osservazioni_per_location">
+
+
+				<p:dataTable id="osservazioni_per_location_table" var="alarm"
+					value="#{alarmsBean.alarms_per_location}"
+					rowStyleClass="#{alarm.color eq 0 ? 'info_color' :  
+						(alarm.color eq 1 ? 'alert_color' : 
+						(alarm.color eq 2 ? 'error_color' : 
+						(alarm.color eq 3 ? 'critical_color' : null)))}">
+
+					<p:column style="width:16px">
+						<p:rowToggler />
+					</p:column>
+					<p:column headerText="Alarms">
+						<h:outputText value="#{alarm.toString()}" />
+					</p:column>
+
+					<p:rowExpansion>
+						<p:panelGrid columns="2" columnClasses="label,value">
+							<h:outputText value="Video Analisys" style="width:200px" />
+							<h:outputText value="===================================" />
+
+							<h:outputText value="Crowd Analysys: (%):" style="width:200px" />
+							<h:outputText value="#{alarm.observation.crowd_density*100}" />
+
+
+							<h:outputText value="Audio Analysys:" style="width:200px" />
+							<h:outputText value="===================================" />
+
+							<h:outputText value="Traffic (%):" style="width:200px" />
+							<h:outputText value="#{alarm.observation.traffic_score*100}" />
+
+							<h:outputText value="Crowd Score (%):" style="width:200px" />
+							<h:outputText value="#{alarm.observation.crowd_score*100}" />
+
+							<h:outputText value="Sound Level (db):" style="width:200px" />
+							<h:outputText value="#{alarm.observation.sound_level}" />
+
+							<h:outputText value="Media files:" style="width:200px" />
+							<p:commandButton icon="ui-icon-video"
+								title="Show media list fo rthis location"
+								oncomplete="PF('media_video').show();"
+								action="#{alarmsBean.showMedia(alarm.id)}"
+								update=":media_form">
+							</p:commandButton>
+							
+							<h:outputText value="Trend Analysys:" style="width:200px" />
+							<h:outputText value="#{alarm.trend_analysys}" />
+							
+							<!--  <h:outputText value=" #{alarm.observation.multimedia}" /> -->
+
+						</p:panelGrid>
+					</p:rowExpansion>
+				</p:dataTable>
+
+			</h:form>
+
+		</p:dialog>
+	</ui:composition>
+</body>
+</html>

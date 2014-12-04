@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+
+</h:head>
+<h:body>
+
+	<style type="text/css">
+.ui-widget, .ui-widget .ui-widget {
+	font-size: 85% !important;
+}
+
+.ui-panelgrid td, .ui-panelgrid tr {
+	border-style: none !important
+}
+</style>
+
+	<f:view contentType="text/html">
+		<h:head>
+			<f:facet name="first">
+				<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
+				<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+				<title>SMARTCOP</title>
+			</f:facet>
+
+			<link type="text/css" rel="stylesheet"
+				href="#{request.contextPath}/css/default.css" />
+			<link type="text/css" rel="stylesheet"
+				href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+
+			<style type="text/css">
+.ui-layout-north {
+	z-index: 20 !important;
+	overflow: visible !important;;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+	overflow: visible !important;
+}
+
+.info_color {
+	background-color: #000000 !important;
+	color: #00FF33;
+}
+
+.alert_color {
+	background-color: #000000 !important;
+	color: #FFFF66;
+}
+
+.error_color {
+	background-color: #000000 !important;
+	color: #F80000;
+}
+
+.critical_color {
+	background-color: #000000 !important;
+	color: #F80000;
+}
+</style>
+		</h:head>
+
+
+		<h:body>
+
+
+
+			<p:layout fullPage="true">
+
+				<p:layoutUnit id="top" position="north" size="50">
+
+					<p:menubar>
+
+						<p:submenu label="Utilities">
+							<p:menuitem value="Terminal Windows" url="#"
+								onclick="PF('terminal').show();" icon="ui-icon ui-icon-info">
+							</p:menuitem>
+
+						</p:submenu>
+
+					</p:menubar>
+				</p:layoutUnit>
+
+				<p:layoutUnit id="bottom" position="south" size="130"
+					resizable="true" closable="false" collapsible="true">
+
+
+					<h:form id="alarmform">
+						<p:poll interval="30" update="alarm_table" />
+						<p:dataTable id="alarm_table" var="alarm"
+							value="#{alarmsBean.alarms}"
+							rowStyleClass="#{alarm.color eq 0 ? 'info_color' :  
+						(alarm.color eq 1 ? 'alert_color' : 
+						(alarm.color eq 2 ? 'error_color' : 
+						(alarm.color eq 3 ? 'critical_color' : null)))}">
+
+							<p:column style="width:16px">
+								<p:rowToggler />
+							</p:column>
+							<p:column headerText="Alarms">
+								<h:outputText value="#{alarm.toString()}" />
+							</p:column>
+
+							<p:rowExpansion>
+								<p:panelGrid columns="2" columnClasses="label,value">
+									<h:outputText value="Observation data:" style="width:200px" />
+									<h:outputText value="#{alarm.observation.toString()}" />
+
+									<h:outputText value="Description:" style="width:200px" />
+									<h:outputText value="#{alarm.description}" />
+
+								</p:panelGrid>
+							</p:rowExpansion>
+						</p:dataTable>
+					</h:form>
+
+
+
+				</p:layoutUnit>
+
+
+
+				<p:layoutUnit id="left" position="west" size="200" resizable="true"
+					closable="false" collapsible="true" header="Locations"
+					minSize="300" collapsed="false">
+
+					<f:facet name="header">
+						<h:panelGrid columns="4" cellpadding="1">
+							<p:commandButton icon="ui-icon-refresh" title="Icon Only">
+							</p:commandButton>
+						</h:panelGrid>
+					</f:facet>
+					<h:form>
+						<p:poll interval="30" update="left_bar" />
+						<h:panelGrid columns="1" id="left_bar">
+							<ui:repeat var="item" value="#{locationsBean.locations()}"
+								varStatus="iteration">
+
+								<h:form >
+									<p:panel  header="#{item.name}">
+										<h:panelGrid columns="2" cellpadding="1">
+											<p:graphicImage value="/images/icona-luogo.png" width="34px"
+												height="34px" />
+											<h:outputText value="#{item.address}" />
+										</h:panelGrid>
+										<h:panelGrid columns="4" cellpadding="1">
+											<p:commandButton icon="ui-icon-bookmark"
+												title="Show alarm trend for location"
+												oncomplete="PF('meter').show();"
+												action="#{chartView.aggiornaLocation_id(item.id)}"
+												update=":metergauge_form"
+												>
+											</p:commandButton>
+											<p:commandButton icon="ui-icon-search" title="Show location on map">
+											</p:commandButton>
+											<p:commandButton icon="ui-icon-alert"
+												title="Show alarms for this location"
+												process="@this"
+												update=":form_osservazioni_per_location:osservazioni_per_location_table"
+												oncomplete="PF('osservazioni_per_location').show();"
+												action="#{alarmsBean.showLocation(item.id)}"
+												>
+											</p:commandButton>
+											<!-- <p:commandButton icon="ui-icon-video"
+												title="Show media list fo rthis location"
+												oncomplete="PF('media_video').show();"
+												>
+											</p:commandButton> -->
+
+										</h:panelGrid>
+									</p:panel>
+								</h:form>
+
+
+							</ui:repeat>
+						</h:panelGrid>
+					</h:form>
+				</p:layoutUnit>
+
+
+				<p:layoutUnit id="right" position="east" size="250" header="Details"
+					resizable="true" closable="false" collapsible="true"
+					collapsed="true" style="text-align:center">
+
+					
+					
+					
+				</p:layoutUnit>
+
+				<p:layoutUnit id="center" position="center">
+					<h:form>
+						<p:growl id="growl" life="3000" />
+						<p:poll interval="30" update="map" />
+
+						<p:gmap id="map" center="#{mapBean.latitude},#{mapBean.longitude}"
+							zoom="#{mapBean.zoom}" type="HYBRID"
+							style="width:1280px;height:600px" model="#{mapBean.simpleModel}">
+							<p:ajax event="overlaySelect"
+								listener="#{mapBean.onCircleSelect}" update="growl" />
+							<p:ajax event="stateChange" listener="#{mapBean.onStateChange}" />
+						</p:gmap>
+					</h:form>
+				</p:layoutUnit>
+
+			</p:layout>
+
+
+		</h:body>
+
+	</f:view>
+
+
+	<p:dialog widgetVar="terminal" width="630" height="400"
+		header="Terminal" resizable="true" showEffect="fade" hideEffect="fade"
+		styleClass="terminalDialog">
+		<h:form>
+			<p:terminal commandHandler="#{terminalView.handleCommand}"
+				style="width:600px" welcomeMessage="Welcome to SmartCop terminal" />
+		</h:form>
+	</p:dialog>
+
+	<ui:include src="osservazioni_locations.xhtml" />
+	<ui:include src="gauges.xhtml" />
+	<ui:include src="media.xhtml" />
+
+
+	<script src="http://maps.google.com/maps/api/js?sensor=false"
+		type="text/javascript"></script>
+
+</h:body>
+</html>
